@@ -1,43 +1,28 @@
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Scanner;
+import org.apache.commons.lang3.StringUtils;
 
 public class Main {
     public static void main(String[] args) {
-        String instruction = JOptionPane.showInputDialog(null, "Enter");
-        Scanner scanner = new Scanner(instruction);
-        ArrayList<String> temp = new ArrayList<String>();
-        String op;
-        String rd;
-        String op3;
-        String rs1;
-        String i;
-        String simm13;
-        String zeros;
-        String rs2;
-
-        int count = 0;
-
-        while (scanner.hasNext()){
-            if (count == 0){
-                if (scanner.equals("ld")){
-                    op = "11";
-                    op3 = Instruction_sets.load();
-                    temp.add(op);
-                    temp.add(op3);
-                }
-                if (scanner.equals("st")){
-                    op = "11";
-                    op3 = Instruction_sets.store();
-                    temp.add(op);
-                    temp.add(op3);
-                }
-            }
+        String label = JOptionPane.showInputDialog(null, "Enter");
+        String machineCode = "00000000000000000000000000000000";
+        String op = machineCode.substring(0,2);
+        String rd = machineCode.substring(2,7);
+        String op3 = machineCode.substring(7, 13);
+        String rs1 = machineCode.substring(13,18);
+        String i = machineCode.substring(18,19);
+        String simm13 = machineCode.substring(19,31);
+        String zeros = machineCode.substring(19,27);
+        String rs2 = machineCode.substring(27,31);
+        if (label.equals("ld")){
+            machineCode = StringUtils.replaceOnce(op, "00", "11") + remainingDigits(machineCode, op);
+            machineCode = StringUtils.replaceOnce(op3, "000000", Instruction_sets.load()) + remainingDigits(machineCode, op3);
         }
-
-        JOptionPane.showMessageDialog(null, temp.toString());
-        
-        System.out.println(instruction);
+        if (label.equals("st")){
+            machineCode = StringUtils.replaceOnce(op, "00", "11") + remainingDigits(machineCode, op);
+            machineCode = StringUtils.replaceOnce(op3, "000000", Instruction_sets.store()) + remainingDigits(machineCode, op);
+        }
+        JOptionPane.showMessageDialog(null, machineCode);
+        System.out.println(label);
     }
 
     /**
