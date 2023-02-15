@@ -18,10 +18,11 @@ public class Main {
 
         int count = 0;
 
+        // int numberOfInputs = countInputs(instruction);
+        // System.out.println(numberOfInputs);
+
         while (scanner.hasNext()){
-            int numberOfInputs = countInputs(instruction);
-            System.out.println(numberOfInputs);
-            if (numberOfInputs == 3){
+            // if (numberOfInputs == 3){
                 if (count == 0){
                     if (scanner.next().equals("ld")){
                         op = opcode("ld");
@@ -48,7 +49,7 @@ public class Main {
                     count++;
                 }
                 if (count == 2){
-                    int num = scanner.next().charAt(2);
+                    int num = scanner.next().charAt(1);
                     rd = Integer.toBinaryString(num);
                     machine_code.add(1, rd);
                     System.out.println(num);
@@ -62,7 +63,7 @@ public class Main {
 
         scanner.close();
     }
-}
+// }
 
     /**
      * @param toUse Specify which string to use
@@ -81,14 +82,14 @@ public class Main {
         return "";
     }
 
-    // Count how many instructions are in the input
-    public static int countInputs(String input){
-        Scanner scanner = new Scanner(input);
-        int inputs = 0;
-        while(scanner.hasNext()){
-            inputs++;
-        }
-        scanner.close();
-        return inputs;
-    }
+    // Count how many instructions are in the input CURRENTLY BREAKS EVERYTHING
+    // public static int countInputs(String input){
+    //     Scanner in = new Scanner(input);
+    //     int inputs = 0;
+    //     while(in.hasNext()){
+    //         inputs++;
+    //     }
+    //     in.close();
+    //     return inputs;
+    // }
 }
