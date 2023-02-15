@@ -84,7 +84,6 @@ public class Main {
             if (i != "0") {
                 i = "1";
                 machine_code.add(4, i);
-                // }
                 // Fixing order
                 Collections.swap(machine_code, 2, 3);
             }
@@ -96,7 +95,7 @@ public class Main {
 
             machine_code.add(getKeyValue(binaryValues, ARC_code.get(0)));
 
-            rd = getBinaryValue(ARC_code.get(3), ARC_code.get(3));
+            rd = getBinaryValue(ARC_code.get(3));
             machine_code.add(1, rd);
 
             try {
@@ -106,10 +105,13 @@ public class Main {
                 machine_code.add(finalResult);
                 i = "1";
             } catch (NumberFormatException ex) {
-                machine_code.add(getBinaryValue(ARC_code.get(2), ARC_code.get(2)));
-                if (i != "1") i = "0";
+                machine_code.add(getBinaryValue(ARC_code.get(1)));
+                machine_code.add(zeros);
+                i = "0";
             }
-            machine_code.add(i);
+            rs1 = getBinaryValue(ARC_code.get(2));
+            machine_code.add(rs1);
+            machine_code.add(4,i);
         }
 
         JOptionPane.showMessageDialog(null, machine_code);
@@ -124,8 +126,8 @@ public class Main {
         if (input.equals("ld") || input.equals("st")) {
             return "11";
         }
-        if (input.equals("addcc") || input.equals("orcc") || input.equals("orncc") || input.equals("srl")
-                || input.equals("jmpl")) {
+        if (input.equals("addcc") || input.equals("orcc") || input.equals("orncc") 
+            || input.equals("srl")|| input.equals("jmpl") || input.equals("subcc")) {
             return "10";
         }
         return "";
@@ -150,8 +152,8 @@ public class Main {
         return op3;
     }
 
-    public static String getBinaryValue(String register, String input) {
-        int numberOfRegister = Integer.parseInt(input.substring(1, input.length()));
+    public static String getBinaryValue(String register) {
+        int numberOfRegister = Integer.parseInt(register.substring(1, register.length()));
         String initial_rd = Integer.toBinaryString(numberOfRegister);
         String binaryValue = String.format("%5s", initial_rd).replaceAll(" ", "0");
         return binaryValue;

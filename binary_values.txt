@@ -1,6 +1,7 @@
 ld 000000
 st 000100
 addcc 010000
+subcc 010100
 andcc 010001
 orcc 010010
 orncc 010110
