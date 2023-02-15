@@ -1,29 +1,62 @@
 import javax.swing.*;
-import org.apache.commons.lang3.StringUtils;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        String label = JOptionPane.showInputDialog(null, "Enter");
-        String machineCode = "00000000000000000000000000000000";
-        String op = machineCode.substring(0,2);
-        String rd = machineCode.substring(2,7);
-        String op3 = machineCode.substring(7, 13);
-        String rs1 = machineCode.substring(13,18);
-        String i = machineCode.substring(18,19);
-        String simm13 = machineCode.substring(19,31);
-        String zeros = machineCode.substring(19,27);
-        String rs2 = machineCode.substring(27,31);
-        if (label.equals("ld")){
-            machineCode = StringUtils.replaceOnce(op, "00", "11") + remainingDigits(machineCode, op);
-            machineCode = StringUtils.replaceOnce(op3, "000000", Instruction_sets.load()) + remainingDigits(machineCode, op3);
-        }
-        if (label.equals("st")){
-            machineCode = StringUtils.replaceOnce(op, "00", "11") + remainingDigits(machineCode, op);
-            machineCode = StringUtils.replaceOnce(op3, "000000", Instruction_sets.store()) + remainingDigits(machineCode, op);
-        }
-        JOptionPane.showMessageDialog(null, machineCode);
-        System.out.println(label);
+        String instruction = JOptionPane.showInputDialog(null, "Enter");
+        Scanner scanner = new Scanner(instruction);
+        ArrayList<String> machine_code = new ArrayList<String>();
+        String op;
+        String rd;
+        String op3;
+        String rs1;
+        String i;
+        int simm13;
+        String zeros;
+        String rs2;
+
+        int count = 0;
+
+        while (scanner.hasNext()){
+            if (count == 0){
+                if (scanner.next().equals("ld")){
+                    op = opcode("ld");
+                    machine_code.add(op);
+                    op3 = Instruction_sets.load();
+                    machine_code.add(op3);
+                }
+                    
+                else if (scanner.next().equals("st")){
+                    op = opcode("ld");
+                    op3 = Instruction_sets.store();
+                    machine_code.add(op);
+                    machine_code.add(op3);
+                }
+                count++;
+            }
+            if (count == 1){
+                if(scanner.hasNextInt()){
+                    simm13 = scanner.nextInt();
+                    String initialResult = Integer.toBinaryString(simm13);
+                    String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
+                    machine_code.add(finalResult);
+                }
+                count++;
+            }
+            if (count == 2){
+                int num = scanner.next().charAt(2);
+                rd = Integer.toBinaryString(num);
+                machine_code.add(1, rd);
+                System.out.println(num);
+                System.out.println(rd);
+            }
+
+        JOptionPane.showMessageDialog(null, machine_code);
+        
+        System.out.println(instruction);
     }
+}
 
     /**
      * @param toUse Specify which string to use
@@ -32,5 +65,12 @@ public class Main {
      */
     public static String remainingDigits(String toUse, String start){
         return toUse.substring(start.length()+1, toUse.length()-1);
+    }
+
+    public static String opcode(String input){
+        if (input.equals("ld") || input.equals("st")){
+            return "11";
+        }
+        return "";
     }
 }
