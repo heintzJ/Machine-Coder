@@ -8,19 +8,24 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException{
         String line = JOptionPane.showInputDialog(null, "Enter");
         Scanner scanner = new Scanner(line);
+        // Result
         ArrayList<String> machine_code = new ArrayList<String>();
+        // List of instructions
         ArrayList<String> ARC_code = new ArrayList<String>();
+        // Instruction format variables
         String op;
         String rd;
         String op3;
         String rs1;
         String i;
         int simm13;
-        String zeros;
+        String zeros = "00000000";
         String rs2;
+        String registerNumber;
 
         int numberOfInputs = 0;
 
+        // Finding number of instructions
         while (scanner.hasNext()){
             ARC_code.add(scanner.next());
             numberOfInputs++;
@@ -34,24 +39,43 @@ public class Main {
                 op = opcode("ld");
                 machine_code.add(op);   
             }
+            // Extract key: value pairs from text file
             for (var entry: binaryValues.entrySet()){
                 if (entry.getKey().equals(instruction)){
                     op3 = entry.getValue();
+                    machine_code.add(op3);
                 }
             }
-            try { 
-                simm13 = (Integer.parseInt(ARC_code.get(1)));
-                String initialResult = Integer.toBinaryString(simm13);
-                String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
-                machine_code.add(finalResult);
+            if (instruction.equals("ld")){
+                try { 
+                    simm13 = (Integer.parseInt(ARC_code.get(1)));
+                    String initialResult = Integer.toBinaryString(simm13);
+                    String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
+                    machine_code.add(finalResult);
+                }
+                // if the second element is not an int, then it is a register
+                catch (NumberFormatException ex){
+                    registerNumber = ARC_code.get(1);
+                    int numberOfRegister = Integer.parseInt(registerNumber.substring(1, registerNumber.length()));
+                    String initial_rd = Integer.toBinaryString(numberOfRegister);
+                    rs1 = String.format("%5s", initial_rd).replaceAll(" ", "0");
+                    machine_code.add(rs1);
+                    machine_code.add(zeros);
+                    i = "0";
+                    machine_code.add(4, i);
+                }
+                registerNumber = ARC_code.get(2);
+                int numberOfRegister = Integer.parseInt(registerNumber.substring(1, registerNumber.length()));
+                String initial_rd = Integer.toBinaryString(numberOfRegister);
+                rd = String.format("%5s", initial_rd).replaceAll(" ", "0");
+                rs1 = "00000";
+                i = "1";
+                machine_code.add(1, rd);
+                machine_code.add(2, rs1);
+                machine_code.add(4, i);
+                System.out.println(rs1);
             }
-            catch (NumberFormatException ex){
-                machine_code.add("");
-            }
-            rd = Integer.toBinaryString(ARC_code.get(0).charAt(1));
-            machine_code.add(1, rd);
         }
-
        
         JOptionPane.showMessageDialog(null, machine_code);
         
