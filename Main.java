@@ -3,6 +3,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Collections;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException{
@@ -57,12 +58,12 @@ public class Main {
                 catch (NumberFormatException ex){
                     registerNumber = ARC_code.get(1);
                     int numberOfRegister = Integer.parseInt(registerNumber.substring(1, registerNumber.length()));
-                    String initial_rd = Integer.toBinaryString(numberOfRegister);
-                    rs1 = String.format("%5s", initial_rd).replaceAll(" ", "0");
+                    String initial_rs1 = Integer.toBinaryString(numberOfRegister);
+                    rs1 = String.format("%5s", initial_rs1).replaceAll(" ", "0");
                     machine_code.add(rs1);
                     machine_code.add(zeros);
                     i = "0";
-                    machine_code.add(4, i);
+                    machine_code.add(3, i);
                 }
                 registerNumber = ARC_code.get(2);
                 int numberOfRegister = Integer.parseInt(registerNumber.substring(1, registerNumber.length()));
@@ -72,8 +73,12 @@ public class Main {
                 i = "1";
                 machine_code.add(1, rd);
                 machine_code.add(2, rs1);
-                machine_code.add(4, i);
-                System.out.println(rs1);
+                // Check if i is already set
+                if (machine_code.get(4) != "0"){
+                    machine_code.add(4, i);
+                }
+                // Fixing order
+                Collections.swap(machine_code, 2, 3);
             }
         }
        
