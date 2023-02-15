@@ -1,12 +1,15 @@
 import javax.swing.*;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
-        String instruction = JOptionPane.showInputDialog(null, "Enter");
-        Scanner scanner = new Scanner(instruction);
+    public static void main(String[] args) throws FileNotFoundException{
+        String line = JOptionPane.showInputDialog(null, "Enter");
+        Scanner scanner = new Scanner(line);
         ArrayList<String> machine_code = new ArrayList<String>();
+        ArrayList<String> ARC_code = new ArrayList<String>();
         String op;
         String rd;
         String op3;
@@ -16,54 +19,46 @@ public class Main {
         String zeros;
         String rs2;
 
-        int count = 0;
-
-        // int numberOfInputs = countInputs(instruction);
-        // System.out.println(numberOfInputs);
+        int numberOfInputs = 0;
 
         while (scanner.hasNext()){
-            // if (numberOfInputs == 3){
-                if (count == 0){
-                    if (scanner.next().equals("ld")){
-                        op = opcode("ld");
-                        machine_code.add(op);
-                        op3 = Instruction_sets.load();
-                        machine_code.add(op3);
-                    }
-                        
-                    else if (scanner.next().equals("st")){
-                        op = opcode("ld");
-                        op3 = Instruction_sets.store();
-                        machine_code.add(op);
-                        machine_code.add(op3);
-                    }
-                    count++;
-                }
-                if (count == 1){
-                    if(scanner.hasNextInt()){
-                        simm13 = scanner.nextInt();
-                        String initialResult = Integer.toBinaryString(simm13);
-                        String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
-                        machine_code.add(finalResult);
-                    }
-                    count++;
-                }
-                if (count == 2){
-                    int num = scanner.next().charAt(1);
-                    rd = Integer.toBinaryString(num);
-                    machine_code.add(1, rd);
-                    System.out.println(num);
-                    System.out.println(rd);
+            ARC_code.add(scanner.next());
+            numberOfInputs++;
+        }
+
+        HashMap<String,String> binaryValues = fileReader("binary_values.txt");
+
+        if (numberOfInputs == 3){
+            String instruction = ARC_code.get(0);
+            if (instruction.equals("ld") || instruction.equals("st")){
+                op = opcode("ld");
+                machine_code.add(op);   
+            }
+            for (var entry: binaryValues.entrySet()){
+                if (entry.getKey().equals(instruction)){
+                    op3 = entry.getValue();
                 }
             }
+            try { 
+                simm13 = (Integer.parseInt(ARC_code.get(1)));
+                String initialResult = Integer.toBinaryString(simm13);
+                String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
+                machine_code.add(finalResult);
+            }
+            catch (NumberFormatException ex){
+                machine_code.add("");
+            }
+            rd = Integer.toBinaryString(ARC_code.get(0).charAt(1));
+            machine_code.add(1, rd);
+        }
 
+       
         JOptionPane.showMessageDialog(null, machine_code);
         
-        System.out.println(instruction);
+        System.out.println(line);
 
         scanner.close();
     }
-// }
 
     /**
      * @param toUse Specify which string to use
@@ -80,6 +75,16 @@ public class Main {
             return "11";
         }
         return "";
+    }
+
+    public static HashMap<String, String> fileReader(String file) throws FileNotFoundException{
+        Scanner binaryScanner = new Scanner(new File(file));
+        HashMap<String, String> hm = new HashMap<String, String>();
+        while(binaryScanner.hasNextLine()){
+            String[] columns = binaryScanner.nextLine().split(" ");
+            hm.put(columns[0], columns[1]);
+        }
+        return hm;
     }
 
     // Count how many instructions are in the input CURRENTLY BREAKS EVERYTHING
