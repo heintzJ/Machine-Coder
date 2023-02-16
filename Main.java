@@ -68,13 +68,10 @@ public class Main {
                 // if the second element is not an int, then it is a register
                 catch (NumberFormatException ex) {
                     if (instruction.equals("ld")) {
-                        registerNumber = ARC_code.get(1);
+                        rs1 = getBinaryValue(ARC_code.get(1));
                     } else if (instruction.equals("st")) {
-                        registerNumber = ARC_code.get(2);
+                        rs1 = getBinaryValue(ARC_code.get(2));
                     }
-                    int numberOfRegister = Integer.parseInt(registerNumber.substring(1, registerNumber.length()));
-                    String initial_rs1 = Integer.toBinaryString(numberOfRegister);
-                    rs1 = String.format("%5s", initial_rs1).replaceAll(" ", "0");
                     machine_code.add(zeros);
                     machine_code.add(rs1);
                     i = "0";
@@ -82,13 +79,10 @@ public class Main {
                 }
 
                 if (instruction.equals("ld")) {
-                    registerNumber = ARC_code.get(2);
+                    rd = getBinaryValue(ARC_code.get(2));
                 } else if (instruction.equals("st")) {
-                    registerNumber = ARC_code.get(1);
+                    rd = getBinaryValue(ARC_code.get(1));
                 }
-                int numberOfRegister = Integer.parseInt(registerNumber.substring(1, registerNumber.length()));
-                String initial_rd = Integer.toBinaryString(numberOfRegister);
-                rd = String.format("%5s", initial_rd).replaceAll(" ", "0");
                 rs1 = "00000";
                 machine_code.add(1, rd);
                 machine_code.add(2, rs1);
@@ -121,9 +115,10 @@ public class Main {
                     machine_code.add(zeros);
                     i = "0";
                 }
-                rs1 = getBinaryValue(ARC_code.get(2));
+                rs1 = getBinaryValue(ARC_code.get(1));
                 machine_code.add(rs1);
                 machine_code.add(4,i);
+                Collections.swap(machine_code, 3, 5);
             }
 
             JOptionPane.showMessageDialog(null, machine_code);
