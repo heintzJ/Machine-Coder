@@ -7,15 +7,15 @@ import java.util.Collections;
 
 public class Main {
     // Instruction format variables
-    public static String i;
-    public static String op;
-    public static String rd;
-    public static String op3;
-    public static String rs1;
-    public static String simm13;
+    public static String i, op, rd, op3, rs1, simm13, rs2, registerNumber, cond, disp22;
+    // public static String op;
+    // public static String rd;
+    // public static String op3;
+    // public static String rs1;
+    // public static String simm13;
     public static final String zeros = "00000000";
-    public static String rs2;
-    public static String registerNumber;
+    // public static String rs2;
+    // public static String registerNumber;
 
     public static void main(String[] args) throws FileNotFoundException {
         String line = JOptionPane.showInputDialog(null, "Enter");
@@ -45,6 +45,23 @@ public class Main {
                 machine_code.add("0000000000100");
                 JOptionPane.showMessageDialog(null, machine_code);
                 break;
+            }
+
+            // branch instruction contain 2 elements
+            if (numberOfInputs == 2){
+                op = opcode(ARC_code.get(0));
+                machine_code.add(op);
+                // extra 0 for branching
+                machine_code.add("0");
+                // cond is pretty much op3 for branching
+                cond = getKeyValue(binaryValues, ARC_code.get(0));
+                machine_code.add(cond);
+                // op2 = 010 for branching
+                machine_code.add("010");
+                int number = Integer.parseInt(ARC_code.get(1));
+                String initialResult = Integer.toBinaryString(number);
+                String disp22 = String.format("%22s", initialResult).replaceAll(" ", "0");
+                machine_code.add(disp22);
             }
 
             // ld and st are 3 input instructions
@@ -150,6 +167,10 @@ public class Main {
             || input.equals("andcc")) {
             return "10";
         }
+        if (input.equals("be") || input.equals("bcs") || input.equals("bneg") 
+            || input.equals("bvs") || input.equals("ba")){
+                return "00";
+            }
         return "";
     }
 

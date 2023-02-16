@@ -7,3 +7,8 @@ orcc 010010
 orncc 010110
 srl 100110
 jmpl 111000
+be 0001
+bcs 0101
+bneg 0110
+bvs 0111
+ba 1000
