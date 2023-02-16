@@ -35,7 +35,7 @@ public class Main {
 
         HashMap<String, String> binaryValues = fileReader("binary_values.txt");
         while (loopBool){
-            // jmpl is always the same, so hard-code output
+            // jmpl is (so far) always the same, so hard-code output
             if (ARC_code.get(0).equals("jmpl")){
                 machine_code.add("10");
                 machine_code.add("00000");
@@ -47,6 +47,7 @@ public class Main {
                 break;
             }
 
+            // ld and st are 3 input instructions
             if (numberOfInputs == 3) {
                 String instruction = ARC_code.get(0);
                 if (instruction.equals("ld") || instruction.equals("st")) {
@@ -55,9 +56,12 @@ public class Main {
                 }
                 // Extract key: value pairs from text file
                 machine_code.add(getKeyValue(binaryValues, instruction));
+
+                // try to get the integer value from the second element
                 try {
                     if (instruction.equals("ld")) {
                         simm13 = getSimm(ARC_code.get(1));
+                    // for store, integer would be in element 2
                     } else if (instruction.equals("st")) {
                         simm13 = getSimm(ARC_code.get(2));
                     }
@@ -76,11 +80,13 @@ public class Main {
                     machine_code.add(2, i);
                 }
 
+                // get the destination register
                 if (instruction.equals("ld")) {
                     rd = getBinaryValue(ARC_code.get(2));
                 } else if (instruction.equals("st")) {
                     rd = getBinaryValue(ARC_code.get(1));
                 }
+                // rs1 is always 00000 for ld and st
                 rs1 = "00000";
                 machine_code.add(1, rd);
                 machine_code.add(2, rs1);
@@ -93,30 +99,35 @@ public class Main {
                 }
             }
 
+            // arithmetic is 4 instructions
             if (numberOfInputs == 4) {
                 op = opcode(ARC_code.get(0));
                 machine_code.add(op);
-
+                // op3 code
                 machine_code.add(getKeyValue(binaryValues, ARC_code.get(0)));
 
+                // destination register
                 rd = getBinaryValue(ARC_code.get(3));
                 machine_code.add(1, rd);
 
+                // try to get integer value from 2nd element, then i = 1
                 try {
                     simm13 = getSimm(ARC_code.get(2));
                     machine_code.add(simm13);
                     i = "1";
+                // if not an integer, then get the register number, and i = 0
                 } catch (NumberFormatException ex) {
                     machine_code.add(getBinaryValue(ARC_code.get(1)));
                     machine_code.add(zeros);
                     i = "0";
                 }
+                // rs1 is the first element (index 1)
                 rs1 = getBinaryValue(ARC_code.get(1));
                 machine_code.add(rs1);
                 machine_code.add(4,i);
                 Collections.swap(machine_code, 3, 5);
             }
-
+            // output
             JOptionPane.showMessageDialog(null, machine_code);
 
             System.out.println(line);
@@ -126,7 +137,10 @@ public class Main {
         }
     }
 
-    // Find the opcode segment of the machine code
+    /**
+     * @param input String for which to get opcode
+     * @return Opcode of the string
+     */
     public static String opcode(String input) {
         if (input.equals("ld") || input.equals("st")) {
             return "11";
@@ -139,6 +153,11 @@ public class Main {
         return "";
     }
 
+    /**
+     * @param file File to get key: value pairs from
+     * @return HashMap of op3 codes for each instruction
+     * @throws FileNotFoundException
+     */
     public static HashMap<String, String> fileReader(String file) throws FileNotFoundException {
         Scanner binaryScanner = new Scanner(new File(file));
         HashMap<String, String> hm = new HashMap<String, String>();
@@ -149,6 +168,11 @@ public class Main {
         return hm;
     }
 
+    /**
+     * @param hm HashMap input
+     * @param input The instruction, such as "addcc"
+     * @return op3 code for the instruction input
+     */
     public static String getKeyValue(HashMap<String, String> hm, String input) {
         for (var entry : hm.entrySet()) {
             if (entry.getKey().equals(input)) {
@@ -158,6 +182,10 @@ public class Main {
         return op3;
     }
 
+    /**
+     * @param register The register from which to get the binary value from
+     * @return The binary value of the number of the register
+     */
     public static String getBinaryValue(String register) {
         int numberOfRegister = Integer.parseInt(register.substring(1, register.length()));
         String initial_rd = Integer.toBinaryString(numberOfRegister);
@@ -165,6 +193,10 @@ public class Main {
         return binaryValue;
     }
 
+    /**
+     * @param integer A string of an integer to assign to simm13
+     * @return Binary value of the integer
+     */
     public static String getSimm(String integer){
         int number = Integer.parseInt(integer);
         String initialResult = Integer.toBinaryString(number);
