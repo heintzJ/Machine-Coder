@@ -1,6 +1,6 @@
 # Machine-Coder
 
-Takes an instruction is assembly and turns it into machine code.
+Takes an instruction in ARC assembly and turns it into machine code.
 Currently works for arithmetic and memory instructions.
 
 Correct input for memory should follow:
@@ -12,3 +12,14 @@ Correct input for arithmetic should follow:
 `<Instruction> <register> <register or integer> <register>`
 
 ex: addcc r1 5 r3
+
+Current working instructions:
+- ld
+- st
+- addcc
+- subcc
+- andcc
+- orcc
+- orncc
+- srl
+- jmpl
