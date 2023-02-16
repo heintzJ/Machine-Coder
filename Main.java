@@ -24,7 +24,7 @@ public class Main {
         ArrayList<String> machine_code = new ArrayList<String>();
         // List of instructions
         ArrayList<String> ARC_code = new ArrayList<String>();
-
+        boolean loopBool = true;
         int numberOfInputs = 0;
 
         // Finding number of instructions
@@ -34,91 +34,105 @@ public class Main {
         }
 
         HashMap<String, String> binaryValues = fileReader("binary_values.txt");
+        while (loopBool){
+            // jmpl is always the same, so hard-code output
+            if (ARC_code.get(0).equals("jmpl")){
+                machine_code.add("10");
+                machine_code.add("00000");
+                machine_code.add("111000");
+                machine_code.add("01111");
+                machine_code.add("1");
+                machine_code.add("0000000000100");
+                JOptionPane.showMessageDialog(null, machine_code);
+                break;
+            }
 
-        if (numberOfInputs == 3) {
-            String instruction = ARC_code.get(0);
-            if (instruction.equals("ld") || instruction.equals("st")) {
-                op = opcode(ARC_code.get(0));
-                machine_code.add(op);
-            }
-            // Extract key: value pairs from text file
-            machine_code.add(getKeyValue(binaryValues, instruction));
-            try {
-                if (instruction.equals("ld")) {
-                    simm13 = Integer.parseInt(ARC_code.get(1));
-                } else if (instruction.equals("st")) {
-                    simm13 = Integer.parseInt(ARC_code.get(2));
+            if (numberOfInputs == 3) {
+                String instruction = ARC_code.get(0);
+                if (instruction.equals("ld") || instruction.equals("st")) {
+                    op = opcode(ARC_code.get(0));
+                    machine_code.add(op);
                 }
-                String initialResult = Integer.toBinaryString(simm13);
-                String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
-                machine_code.add(finalResult);
-            }
-            // if the second element is not an int, then it is a register
-            catch (NumberFormatException ex) {
+                // Extract key: value pairs from text file
+                machine_code.add(getKeyValue(binaryValues, instruction));
+                try {
+                    if (instruction.equals("ld")) {
+                        simm13 = Integer.parseInt(ARC_code.get(1));
+                    } else if (instruction.equals("st")) {
+                        simm13 = Integer.parseInt(ARC_code.get(2));
+                    }
+                    String initialResult = Integer.toBinaryString(simm13);
+                    String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
+                    machine_code.add(finalResult);
+                }
+                // if the second element is not an int, then it is a register
+                catch (NumberFormatException ex) {
+                    if (instruction.equals("ld")) {
+                        registerNumber = ARC_code.get(1);
+                    } else if (instruction.equals("st")) {
+                        registerNumber = ARC_code.get(2);
+                    }
+                    int numberOfRegister = Integer.parseInt(registerNumber.substring(1, registerNumber.length()));
+                    String initial_rs1 = Integer.toBinaryString(numberOfRegister);
+                    rs1 = String.format("%5s", initial_rs1).replaceAll(" ", "0");
+                    machine_code.add(zeros);
+                    machine_code.add(rs1);
+                    i = "0";
+                    machine_code.add(2, i);
+                }
+
                 if (instruction.equals("ld")) {
-                    registerNumber = ARC_code.get(1);
-                } else if (instruction.equals("st")) {
                     registerNumber = ARC_code.get(2);
+                } else if (instruction.equals("st")) {
+                    registerNumber = ARC_code.get(1);
                 }
                 int numberOfRegister = Integer.parseInt(registerNumber.substring(1, registerNumber.length()));
-                String initial_rs1 = Integer.toBinaryString(numberOfRegister);
-                rs1 = String.format("%5s", initial_rs1).replaceAll(" ", "0");
-                machine_code.add(zeros);
+                String initial_rd = Integer.toBinaryString(numberOfRegister);
+                rd = String.format("%5s", initial_rd).replaceAll(" ", "0");
+                rs1 = "00000";
+                machine_code.add(1, rd);
+                machine_code.add(2, rs1);
+                // Check if i is already set
+                if (i != "0") {
+                    i = "1";
+                    machine_code.add(4, i);
+                    // Fixing order
+                    Collections.swap(machine_code, 2, 3);
+                }
+            }
+
+            if (numberOfInputs == 4) {
+                op = opcode(ARC_code.get(0));
+                machine_code.add(op);
+
+                machine_code.add(getKeyValue(binaryValues, ARC_code.get(0)));
+
+                rd = getBinaryValue(ARC_code.get(3));
+                machine_code.add(1, rd);
+
+                try {
+                    simm13 = Integer.parseInt(ARC_code.get(2));
+                    String initialResult = Integer.toBinaryString(simm13);
+                    String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
+                    machine_code.add(finalResult);
+                    i = "1";
+                } catch (NumberFormatException ex) {
+                    machine_code.add(getBinaryValue(ARC_code.get(1)));
+                    machine_code.add(zeros);
+                    i = "0";
+                }
+                rs1 = getBinaryValue(ARC_code.get(2));
                 machine_code.add(rs1);
-                i = "0";
-                machine_code.add(2, i);
+                machine_code.add(4,i);
             }
 
-            if (instruction.equals("ld")) {
-                registerNumber = ARC_code.get(2);
-            } else if (instruction.equals("st")) {
-                registerNumber = ARC_code.get(1);
-            }
-            int numberOfRegister = Integer.parseInt(registerNumber.substring(1, registerNumber.length()));
-            String initial_rd = Integer.toBinaryString(numberOfRegister);
-            rd = String.format("%5s", initial_rd).replaceAll(" ", "0");
-            rs1 = "00000";
-            machine_code.add(1, rd);
-            machine_code.add(2, rs1);
-            // Check if i is already set
-            if (i != "0") {
-                i = "1";
-                machine_code.add(4, i);
-                // Fixing order
-                Collections.swap(machine_code, 2, 3);
-            }
+            JOptionPane.showMessageDialog(null, machine_code);
+
+            System.out.println(line);
+
+            scanner.close();
+            loopBool = false;
         }
-
-        if (numberOfInputs == 4) {
-            op = opcode(ARC_code.get(0));
-            machine_code.add(op);
-
-            machine_code.add(getKeyValue(binaryValues, ARC_code.get(0)));
-
-            rd = getBinaryValue(ARC_code.get(3));
-            machine_code.add(1, rd);
-
-            try {
-                simm13 = Integer.parseInt(ARC_code.get(2));
-                String initialResult = Integer.toBinaryString(simm13);
-                String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
-                machine_code.add(finalResult);
-                i = "1";
-            } catch (NumberFormatException ex) {
-                machine_code.add(getBinaryValue(ARC_code.get(1)));
-                machine_code.add(zeros);
-                i = "0";
-            }
-            rs1 = getBinaryValue(ARC_code.get(2));
-            machine_code.add(rs1);
-            machine_code.add(4,i);
-        }
-
-        JOptionPane.showMessageDialog(null, machine_code);
-
-        System.out.println(line);
-
-        scanner.close();
     }
 
     // Find the opcode segment of the machine code
@@ -127,7 +141,8 @@ public class Main {
             return "11";
         }
         if (input.equals("addcc") || input.equals("orcc") || input.equals("orncc") 
-            || input.equals("srl")|| input.equals("jmpl") || input.equals("subcc")) {
+            || input.equals("srl")|| input.equals("jmpl") || input.equals("subcc")
+            || input.equals("andcc")) {
             return "10";
         }
         return "";
