@@ -12,7 +12,7 @@ public class Main {
     public static String rd;
     public static String op3;
     public static String rs1;
-    public static int simm13;
+    public static String simm13;
     public static final String zeros = "00000000";
     public static String rs2;
     public static String registerNumber;
@@ -57,13 +57,11 @@ public class Main {
                 machine_code.add(getKeyValue(binaryValues, instruction));
                 try {
                     if (instruction.equals("ld")) {
-                        simm13 = Integer.parseInt(ARC_code.get(1));
+                        simm13 = getSimm(ARC_code.get(1));
                     } else if (instruction.equals("st")) {
-                        simm13 = Integer.parseInt(ARC_code.get(2));
+                        simm13 = getSimm(ARC_code.get(2));
                     }
-                    String initialResult = Integer.toBinaryString(simm13);
-                    String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
-                    machine_code.add(finalResult);
+                    machine_code.add(simm13);
                 }
                 // if the second element is not an int, then it is a register
                 catch (NumberFormatException ex) {
@@ -105,10 +103,8 @@ public class Main {
                 machine_code.add(1, rd);
 
                 try {
-                    simm13 = Integer.parseInt(ARC_code.get(2));
-                    String initialResult = Integer.toBinaryString(simm13);
-                    String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
-                    machine_code.add(finalResult);
+                    simm13 = getSimm(ARC_code.get(2));
+                    machine_code.add(simm13);
                     i = "1";
                 } catch (NumberFormatException ex) {
                     machine_code.add(getBinaryValue(ARC_code.get(1)));
@@ -167,5 +163,12 @@ public class Main {
         String initial_rd = Integer.toBinaryString(numberOfRegister);
         String binaryValue = String.format("%5s", initial_rd).replaceAll(" ", "0");
         return binaryValue;
+    }
+
+    public static String getSimm(String integer){
+        int number = Integer.parseInt(integer);
+        String initialResult = Integer.toBinaryString(number);
+        String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
+        return finalResult;
     }
 }
