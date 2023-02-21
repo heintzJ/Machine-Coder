@@ -135,15 +135,16 @@ public class Main {
                     i = "1";
                 // if not an integer, then get the register number, and i = 0
                 } catch (NumberFormatException ex) {
-                    machine_code.add(getBinaryValue(ARC_code.get(1)));
+                    rs1 = getBinaryValue(ARC_code.get(1));
+                    machine_code.add(rs1);
                     machine_code.add(zeros);
                     i = "0";
                 }
                 // rs1 is the first element (index 1)
-                rs1 = getBinaryValue(ARC_code.get(1));
-                machine_code.add(rs1);
+                rs2 = getBinaryValue(ARC_code.get(2));
+                machine_code.add(rs2);
                 machine_code.add(4,i);
-                Collections.swap(machine_code, 3, 5);
+                // Collections.swap(machine_code, 3, 5);
             }
             // output
             JOptionPane.showMessageDialog(null, machine_code);
