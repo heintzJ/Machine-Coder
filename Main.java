@@ -128,23 +128,23 @@ public class Main {
                 rd = getBinaryValue(ARC_code.get(3));
                 machine_code.add(1, rd);
 
+                rs1 = getBinaryValue(ARC_code.get(1));
+
                 // try to get integer value from 2nd element, then i = 1
                 try {
                     simm13 = getSimm(ARC_code.get(2));
+                    machine_code.add(rs1);
                     machine_code.add(simm13);
                     i = "1";
                 // if not an integer, then get the register number, and i = 0
                 } catch (NumberFormatException ex) {
-                    rs1 = getBinaryValue(ARC_code.get(1));
                     machine_code.add(rs1);
                     machine_code.add(zeros);
+                    rs2 = getBinaryValue(ARC_code.get(2));
+                    machine_code.add(rs2);
                     i = "0";
                 }
-                // rs1 is the first element (index 1)
-                rs2 = getBinaryValue(ARC_code.get(2));
-                machine_code.add(rs2);
                 machine_code.add(4,i);
-                // Collections.swap(machine_code, 3, 5);
             }
             // output
             JOptionPane.showMessageDialog(null, machine_code);
