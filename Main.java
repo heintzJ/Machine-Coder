@@ -60,6 +60,7 @@ public class Main {
                 machine_code.add("010");
                 int number = Integer.parseInt(ARC_code.get(1));
                 String initialResult = Integer.toBinaryString(number);
+                // padding zeros to make 22 bits
                 String disp22 = String.format("%22s", initialResult).replaceAll(" ", "0");
                 machine_code.add(disp22);
             }
@@ -210,6 +211,7 @@ public class Main {
     public static String getBinaryValue(String register) {
         int numberOfRegister = Integer.parseInt(register.substring(1, register.length()));
         String initial_rd = Integer.toBinaryString(numberOfRegister);
+        // padding zeros to make 5 bits
         String binaryValue = String.format("%5s", initial_rd).replaceAll(" ", "0");
         return binaryValue;
     }
@@ -221,6 +223,7 @@ public class Main {
     public static String getSimm(String integer){
         int number = Integer.parseInt(integer);
         String initialResult = Integer.toBinaryString(number);
+        // padding zeros to make 13 bits
         String finalResult = String.format("%13s", initialResult).replaceAll(" ", "0");
         return finalResult;
     }
