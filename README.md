@@ -1,7 +1,6 @@
 # Machine-Coder
 
 Takes an instruction in ARC assembly and turns it into machine code.
-Currently works for arithmetic and memory instructions.
 
 Correct input for memory should follow:
 `<instruction> <register or integer> <register or integer>`
